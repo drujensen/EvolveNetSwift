@@ -1,47 +1,66 @@
 import XCTest
-import class Foundation.Bundle
+@testable import EvolveNet
 
 final class EvolveNetTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
+    func testLinear() throws {
+        let data: [[[Double]]] = [
+            [[0.0],[0.0]],
+            [[1.0],[1.0]],
+            [[2.0],[2.0]],
+            [[3.0],[3.0]],
+            [[4.0],[4.0]],
+        ]
 
-        // Some of the APIs that we use below are available in macOS 10.13 and above.
-        guard #available(macOS 10.13, *) else {
-            return
-        }
+        let linear = LinearNetwork()
+        let organism = EvolveNet(network: linear)
+        let network = organism.evolve(data: data)
 
-        // Mac Catalyst won't have `Process`, but it is supported for executables.
-        #if !targetEnvironment(macCatalyst)
-
-        let fooBinary = productsDirectory.appendingPathComponent("EvolveNet")
-
-        let process = Process()
-        process.executableURL = fooBinary
-
-        let pipe = Pipe()
-        process.standardOutput = pipe
-
-        try process.run()
-        process.waitUntilExit()
-
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output = String(data: data, encoding: .utf8)
-
-        XCTAssertEqual(output, "Hello, world!\n")
-        #endif
+        XCTAssertEqual(network.run(data: [5.0])[0], 5.0)
+        XCTAssertEqual(network.run(data: [1000.0])[0], 1000.0)
     }
 
-    /// Returns path to the built products directory.
-    var productsDirectory: URL {
-      #if os(macOS)
-        for bundle in Bundle.allBundles where bundle.bundlePath.hasSuffix(".xctest") {
-            return bundle.bundleURL.deletingLastPathComponent()
+    func testQuadradic() throws {
+        var data: [[[Double]]] = []
+        var input: [Double] = []
+        var output: [Double] = []
+
+        (-10..<10).forEach {
+            input.append(Double($0))
+            output.append(Double($0 * $0))
+            data.append([input, output])
         }
-        fatalError("couldn't find the products directory")
-      #else
-        return Bundle.main.bundleURL
-      #endif
+
+        let quadradic = QuadradicNetwork()
+        let organism = EvolveNet(network: quadradic)
+        let network = organism.evolve(data: data)
+
+        XCTAssertEqual(network.run(data: [5.0])[0], 25.0)
+        XCTAssertEqual(network.run(data: [10.0])[0], 100.0)
     }
+
+    func testNeural() throws {
+        let data: [[[Double]]] = [
+            [[0.0, 0.0],[0.0]],
+            [[0.0, 0.1],[1.0]],
+            [[0.1, 0.0],[1.0]],
+            [[0.1, 0.1],[0.0]],
+        ]
+
+        let neural = NeuralNetwork()
+        neural.push(layer: Layer(size: 2))
+        neural.push(layer: Layer(size: 2))
+        neural.push(layer: Layer(size: 1))
+        neural.connect()
+        dump(neural)
+
+        let organism = EvolveNet(network: neural)
+        let network = organism.evolve(data: data)
+
+        XCTAssertEqual(network.run(data: [0.0, 0.0])[0], 0.0)
+        XCTAssertEqual(network.run(data: [0.0, 0.1])[0], 1.0)
+        XCTAssertEqual(network.run(data: [0.1, 0.0])[0], 1.0)
+        XCTAssertEqual(network.run(data: [0.1, 0.1])[0], 0.0)
+    }
+
 }
+
