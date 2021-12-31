@@ -46,6 +46,7 @@ class EvolveNet {
             self.networks[4...].forEach { $0.mutate() }
         }
 
+        self.networks.sort { $0.error < $1.error }
         return self.networks[0]
     }
 }

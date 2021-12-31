@@ -15,11 +15,11 @@ class Synapse {
     }
 
     func randomize() {
-        self.weight = Double.random(in: -1..<1)
+        self.weight = Double.random(in: -1...1)
     }
 
     func mutate(rate: Double) {
-        self.weight += Double.random(in: -rate..<rate)
+        self.weight += Double.random(in: -rate...rate)
     }
 
     func punctuate(pos: Int) {
@@ -49,14 +49,15 @@ class Neuron {
     }
 
     func randomize() {
-        self.bias = Double.random(in: -1..<1)
+        self.bias = Double.random(in: -1...1)
         for synapse in self.synapses {
             synapse.randomize()
         }
     }
 
     func mutate(rate: Double) {
-        self.bias += Double.random(in: -rate..<rate)
+        self.bias += Double.random(in: -rate...rate)
+
         let synapse_rate = rate / Double(self.synapses.count)
         for synapse in self.synapses {
             synapse.mutate(rate: synapse_rate)
@@ -98,7 +99,6 @@ class Layer {
     var neurons: [Neuron] = []
     var size: Int
     let function: String
-    var parent: Layer? = nil
 
     init(size: Int, function: String = "signoid") {
         self.size = size
@@ -110,7 +110,6 @@ class Layer {
 
     func connect(parent optParent: Layer?) {
         if let parent = optParent {
-            self.parent = parent
             for neuron in self.neurons {
                for index in (0..<parent.neurons.count) {
                    neuron.synapses.append(Synapse(index: index, weight: 0.0))
@@ -121,7 +120,7 @@ class Layer {
 
     func clone() -> Layer {
         let layer = Layer(size: 0, function: self.function)
-        layer.size = self.neurons.count
+        layer.size = self.size
         for neuron in self.neurons {
             layer.neurons.append(neuron.clone())
         }
@@ -147,16 +146,16 @@ class Layer {
         }
     }
 
+    func activate(parent: Layer) {
+        for neuron in self.neurons {
+            neuron.activate(parent: parent)
+        }
+    }
+    
     func activate(data: [Double]) {
         for index in (0..<self.neurons.count) {
             let neuron = self.neurons[index]
             neuron.activate(value: data[index])
-        }
-    }
-
-    func activate(parent: Layer) {
-        for neuron in self.neurons {
-            neuron.activate(parent: parent)
         }
     }
 }
@@ -179,6 +178,7 @@ class NeuralNetwork: Network {
 
     func clone() -> Network {
         let network = NeuralNetwork()
+        network.error = self.error
         for layer in self.layers {
             network.layers.append(layer.clone())
         }
@@ -206,11 +206,12 @@ class NeuralNetwork: Network {
     }
 
     func run(data: [Double]) -> [Double] {
-        for layer in self.layers {
-            if let parent = layer.parent {
-                layer.activate(parent: parent)
-            } else {
+        for index in (0..<self.layers.count) {
+            let layer = self.layers[index]
+            if index == 0 {
                 layer.activate(data: data)
+            } else {
+                layer.activate(parent: self.layers[index-1])
             }
         }
         return self.layers.last!.neurons.map { neuron in neuron.activation }
@@ -228,6 +229,6 @@ class NeuralNetwork: Network {
                 sum += diff * diff
             }
         }
-        self.error = sum / Double(2 * data.count)
+        self.error = sum / 2 * Double(data.count)
     }
 }

@@ -41,9 +41,9 @@ final class EvolveNetTests: XCTestCase {
     func testNeural() throws {
         let data: [[[Double]]] = [
             [[0.0, 0.0],[0.0]],
-            [[0.0, 0.1],[1.0]],
-            [[0.1, 0.0],[1.0]],
-            [[0.1, 0.1],[0.0]],
+            [[0.0, 1.0],[1.0]],
+            [[1.0, 0.0],[1.0]],
+            [[1.0, 1.0],[0.0]],
         ]
 
         let neural = NeuralNetwork()
@@ -51,16 +51,13 @@ final class EvolveNetTests: XCTestCase {
         neural.push(layer: Layer(size: 2))
         neural.push(layer: Layer(size: 1))
         neural.connect()
-        dump(neural)
-
+        
         let organism = EvolveNet(network: neural)
         let network = organism.evolve(data: data)
 
-        XCTAssertEqual(network.run(data: [0.0, 0.0])[0], 0.0)
-        XCTAssertEqual(network.run(data: [0.0, 0.1])[0], 1.0)
-        XCTAssertEqual(network.run(data: [0.1, 0.0])[0], 1.0)
-        XCTAssertEqual(network.run(data: [0.1, 0.1])[0], 0.0)
+        XCTAssertLessThan(network.run(data: [0.0, 0.0])[0], 0.1)
+        XCTAssertGreaterThan(network.run(data: [0.0, 1.0])[0], 0.9)
+        XCTAssertGreaterThan(network.run(data: [1.0, 0.0])[0], 0.9)
+        XCTAssertLessThan(network.run(data: [1.0, 1.0])[0], 0.1)
     }
-
 }
-
