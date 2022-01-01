@@ -229,6 +229,6 @@ class NeuralNetwork: Network {
                 sum += diff * diff
             }
         }
-        self.error = sum / 2 * Double(data.count)
+        self.error = sum / (2 * Double(data.count))
     }
 }

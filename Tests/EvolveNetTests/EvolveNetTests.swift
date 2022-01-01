@@ -36,6 +36,7 @@ final class EvolveNetTests: XCTestCase {
 
         XCTAssertEqual(network.run(data: [5.0])[0], 25.0)
         XCTAssertEqual(network.run(data: [10.0])[0], 100.0)
+        XCTAssertEqual(network.run(data: [100.0])[0], 10000.0)
     }
 
     func testNeural() throws {

@@ -4,8 +4,8 @@ class EvolveNet {
     var networks: [Network] = []
     var logger = Logger(label: "EvolveNet")
 
-    init(network: Network, size: Int = 16) {
-        for _ in 0..<size {
+    init(network: Network, population: Int = 32) {
+        for _ in 0..<population {
             self.networks.append(network.clone().randomize())
         }
     }
@@ -17,7 +17,7 @@ class EvolveNet {
 
         for gen in 0..<generations {
             // Evalutate each network
-            self.networks.forEach { $0.evaluate(data: data) }
+            self.networks.forEach { network in network.evaluate(data: data) }
 
             // Sort from best to worst error
             self.networks.sort { $0.error < $1.error }
@@ -39,11 +39,11 @@ class EvolveNet {
             // Clone top half
             self.networks.forEach { self.networks.append($0.clone()) }
 
-            // Punctuate top 3 after best
-            self.networks[1...3].enumerated().forEach { $1.punctuate(pos: $0) }
+            // Punctuate top
+            self.networks[1..<8].enumerated().forEach { $1.punctuate(pos: $0) }
 
             // Mutate
-            self.networks[4...].forEach { $0.mutate() }
+            self.networks[8...].forEach { $0.mutate() }
         }
 
         self.networks.sort { $0.error < $1.error }
