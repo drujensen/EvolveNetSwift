@@ -13,12 +13,29 @@ class EvolveNet {
     func evolve(data: [[[Double]]],
                 generations: Int = 10000,
                 errorThreshold: Double = 0.0,
-                logEach: Int = 1000) -> Network {
+                logEach: Int = 1000) async -> Network {
 
         for gen in 0..<generations {
             // Evalutate each network
-            self.networks.forEach { network in network.evaluate(data: data) }
-
+            if #available(macOS 10.15, *) {
+                var tasks: [Task<Any, Error>] = []
+                for network in self.networks {
+                    let task = Task<Any, Error> { return network.evaluate(data: data) }
+                    tasks.append(task)
+                }
+                for task in tasks {
+                    do {
+                        try await task.value
+                    } catch {
+                        print("Error")
+                    }
+                }
+            } else {
+                for network in self.networks {
+                    network.evaluate(data: data)
+                }
+            }
+            
             // Sort from best to worst error
             self.networks.sort { $0.error < $1.error }
 

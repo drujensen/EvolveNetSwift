@@ -2,7 +2,7 @@ import XCTest
 @testable import EvolveNet
 
 final class EvolveNetTests: XCTestCase {
-    func testLinear() throws {
+    func testLinear() async throws {
         let data: [[[Double]]] = [
             [[0.0],[0.0]],
             [[1.0],[1.0]],
@@ -13,13 +13,13 @@ final class EvolveNetTests: XCTestCase {
 
         let linear = LinearNetwork()
         let organism = EvolveNet(network: linear)
-        let network = organism.evolve(data: data)
+        let network = await organism.evolve(data: data)
 
         XCTAssertEqual(network.run(data: [5.0])[0], 5.0)
         XCTAssertEqual(network.run(data: [1000.0])[0], 1000.0)
     }
 
-    func testQuadradic() throws {
+    func testQuadradic() async throws {
         var data: [[[Double]]] = []
         var input: [Double] = []
         var output: [Double] = []
@@ -32,14 +32,14 @@ final class EvolveNetTests: XCTestCase {
 
         let quadradic = QuadradicNetwork()
         let organism = EvolveNet(network: quadradic)
-        let network = organism.evolve(data: data)
+        let network = await organism.evolve(data: data)
 
         XCTAssertEqual(network.run(data: [5.0])[0], 25.0)
         XCTAssertEqual(network.run(data: [10.0])[0], 100.0)
         XCTAssertEqual(network.run(data: [100.0])[0], 10000.0)
     }
 
-    func testNeural() throws {
+    func testNeural() async throws {
         let data: [[[Double]]] = [
             [[0.0, 0.0],[0.0]],
             [[0.0, 1.0],[1.0]],
@@ -54,7 +54,7 @@ final class EvolveNetTests: XCTestCase {
         neural.connect()
         
         let organism = EvolveNet(network: neural)
-        let network = organism.evolve(data: data)
+        let network = await organism.evolve(data: data)
 
         XCTAssertLessThan(network.run(data: [0.0, 0.0])[0], 0.1)
         XCTAssertGreaterThan(network.run(data: [0.0, 1.0])[0], 0.9)

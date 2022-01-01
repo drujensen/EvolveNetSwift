@@ -3,7 +3,7 @@ import XCTest
 
 class IrisNeuralTests: XCTestCase {
 
-    func testIrisDataModel() throws {
+    func testIrisDataModel() async throws {
         var data: [[[Double]]] = []
         
         let url = URL(fileURLWithPath: "/Users/drujensen/workspace/swift/EvolveNet/Tests/EvolveNetTests/iris.csv")
@@ -61,7 +61,7 @@ class IrisNeuralTests: XCTestCase {
         neural.connect()
         
         let organism = EvolveNet(network: neural)
-        let network = organism.evolve(data: data, generations: 10000, logEach: 100)
+        let network = await organism.evolve(data: data, generations: 10000, logEach: 100)
 
         var tp = 0
         var tn = 0
