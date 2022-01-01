@@ -61,7 +61,7 @@ class IrisNeuralTests: XCTestCase {
         neural.connect()
         
         let organism = EvolveNet(network: neural)
-        let network = await organism.evolve(data: data, generations: 10000, logEach: 100)
+        let network = await organism.evolve(data: data)
 
         var tp = 0
         var tn = 0

@@ -4,7 +4,7 @@ public class EvolveNet {
     var networks: [Network] = []
     var logger = Logger(label: "EvolveNet")
 
-    public init(network: Network, population: Int = 32) {
+    public init(network: Network, population: Int = 16) {
         for _ in 0..<population {
             self.networks.append(network.clone().randomize())
         }
@@ -42,11 +42,11 @@ public class EvolveNet {
             // Determine Error
             let error = self.networks[0].error
             if error <= errorThreshold {
-                logger.info("generation: \(gen) error \(error). below threshold. breaking.")
+                logger.info("generation: \(gen) error: \(error). below threshold. breaking.")
                 break
             }
             if gen % logEach == 0 {
-                logger.info("generation: \(gen) error \(error).")
+                logger.info("generation: \(gen) error: \(error).")
             }
 
             // Kill bottom half
@@ -57,10 +57,10 @@ public class EvolveNet {
             self.networks.forEach { self.networks.append($0.clone()) }
 
             // Punctuate top
-            self.networks[1..<8].enumerated().forEach { $1.punctuate(pos: $0) }
+            self.networks[1..<4].enumerated().forEach { $1.punctuate(pos: $0) }
 
             // Mutate
-            self.networks[8...].forEach { $0.mutate() }
+            self.networks[4...].forEach { $0.mutate() }
         }
 
         self.networks.sort { $0.error < $1.error }
