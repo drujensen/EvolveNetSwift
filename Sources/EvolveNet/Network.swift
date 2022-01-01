@@ -1,4 +1,4 @@
-protocol Network {
+public protocol Network {
     var error: Double { get set }
 
     func clone() -> Network

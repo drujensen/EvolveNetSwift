@@ -1,16 +1,16 @@
 import Logging
 
-class EvolveNet {
+public class EvolveNet {
     var networks: [Network] = []
     var logger = Logger(label: "EvolveNet")
 
-    init(network: Network, population: Int = 32) {
+    public init(network: Network, population: Int = 32) {
         for _ in 0..<population {
             self.networks.append(network.clone().randomize())
         }
     }
 
-    func evolve(data: [[[Double]]],
+    public func evolve(data: [[[Double]]],
                 generations: Int = 10000,
                 errorThreshold: Double = 0.0,
                 logEach: Int = 1000) async -> Network {

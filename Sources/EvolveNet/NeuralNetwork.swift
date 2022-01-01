@@ -95,12 +95,12 @@ class Neuron {
     }
 }
 
-class Layer {
+public class Layer {
     var neurons: [Neuron] = []
     var size: Int
     let function: String
 
-    init(size: Int, function: String = "signoid") {
+    public init(size: Int, function: String = "signoid") {
         self.size = size
         self.function = function
         for _ in (0..<size) {
@@ -160,15 +160,17 @@ class Layer {
     }
 }
 
-class NeuralNetwork: Network {
+public class NeuralNetwork: Network {
     var layers: [Layer] = []
-    var error: Double = 1.0
+    public var error: Double = 1.0
+    
+    public init() {}
 
-    func push(layer: Layer) {
+    public func push(layer: Layer) {
         self.layers.append(layer)
     }
 
-    func connect() {
+    public func connect() {
         var parent: Layer? = nil
         for layer in layers {
             layer.connect(parent: parent)
@@ -176,7 +178,7 @@ class NeuralNetwork: Network {
         }
     }
 
-    func clone() -> Network {
+    public func clone() -> Network {
         let network = NeuralNetwork()
         network.error = self.error
         for layer in self.layers {
@@ -185,7 +187,7 @@ class NeuralNetwork: Network {
         return network
     }
 
-    func randomize() -> Network {
+    public func randomize() -> Network {
         self.error = 1.0
         for layer in self.layers {
             layer.randomize()
@@ -193,19 +195,19 @@ class NeuralNetwork: Network {
         return self
     }
 
-    func mutate() {
+    public func mutate() {
         for layer in self.layers {
             layer.mutate(rate: self.error)
         }
     }
 
-    func punctuate(pos: Int) {
+    public func punctuate(pos: Int) {
         for layer in self.layers {
             layer.punctuate(pos: pos)
         }
     }
 
-    func run(data: [Double]) -> [Double] {
+    public func run(data: [Double]) -> [Double] {
         for index in (0..<self.layers.count) {
             let layer = self.layers[index]
             if index == 0 {
@@ -217,7 +219,7 @@ class NeuralNetwork: Network {
         return self.layers.last!.neurons.map { neuron in neuron.activation }
     }
 
-    func evaluate(data: [[[Double]]]) {
+    public func evaluate(data: [[[Double]]]) {
         var sum: Double = 0.0
         for row in data {
             let expected = row[1]
