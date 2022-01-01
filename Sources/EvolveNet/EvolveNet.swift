@@ -49,12 +49,13 @@ public class EvolveNet {
                 logger.info("generation: \(gen) error: \(error).")
             }
 
-            // Kill bottom half
-            let size = self.networks.count / 2
-            self.networks = Array(self.networks[0..<size])
+            // Kill bottom quarter
+            let half = self.networks.count / 2
+            let quarter = half / 2
+            self.networks = Array(self.networks[0...(half+quarter)])
 
-            // Clone top half
-            self.networks.forEach { self.networks.append($0.clone()) }
+            // Clone top quarter
+            self.networks[0...quarter].forEach { self.networks.append($0.clone()) }
 
             // Punctuate top
             self.networks[1..<4].enumerated().forEach { $1.punctuate(pos: $0) }
