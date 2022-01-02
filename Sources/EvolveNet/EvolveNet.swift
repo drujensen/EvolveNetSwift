@@ -25,7 +25,7 @@ public class EvolveNet {
                 }
                 for task in tasks {
                     do {
-                        try await task.value
+                        let _ = try await task.value
                     } catch {
                         print("Error")
                     }
