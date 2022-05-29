@@ -5,7 +5,7 @@ class IrisNeuralTests: XCTestCase {
 
     func testIrisDataModel() async throws {
         var data: [[[Double]]] = []
-        
+
         let url = URL(fileURLWithPath: "/Users/drujensen/workspace/swift/EvolveNet/Tests/EvolveNetTests/iris.csv")
         let contents = try String(contentsOf: url)
         let rows = contents.split(separator: "\n")
@@ -34,7 +34,7 @@ class IrisNeuralTests: XCTestCase {
             }
             data.append([input, output])
         }
-        
+
         var mins: [Double] = []
         var maxs: [Double] = []
         for idx in (0...3) {
@@ -53,13 +53,13 @@ class IrisNeuralTests: XCTestCase {
             }
             return [input, output]
         }
-        
+
         let neural = NeuralNetwork()
         neural.push(layer: Layer(size: 4))
         neural.push(layer: Layer(size: 5))
         neural.push(layer: Layer(size: 3))
         neural.connect()
-        
+
         let organism = EvolveNet(network: neural)
         let network = await organism.evolve(data: data)
 

@@ -35,7 +35,7 @@ public class EvolveNet {
                     network.evaluate(data: data)
                 }
             }
-            
+
             // Sort from best to worst error
             self.networks.sort { $0.error < $1.error }
 

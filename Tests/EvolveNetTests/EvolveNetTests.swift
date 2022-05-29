@@ -52,7 +52,7 @@ final class EvolveNetTests: XCTestCase {
         neural.push(layer: Layer(size: 2))
         neural.push(layer: Layer(size: 1))
         neural.connect()
-        
+
         let organism = EvolveNet(network: neural)
         let network = await organism.evolve(data: data)
 

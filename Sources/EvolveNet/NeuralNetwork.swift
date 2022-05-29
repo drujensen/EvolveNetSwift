@@ -151,7 +151,7 @@ public class Layer {
             neuron.activate(parent: parent)
         }
     }
-    
+
     func activate(data: [Double]) {
         for index in (0..<self.neurons.count) {
             let neuron = self.neurons[index]
@@ -163,7 +163,7 @@ public class Layer {
 public class NeuralNetwork: Network {
     var layers: [Layer] = []
     public var error: Double = 1.0
-    
+
     public init() {}
 
     public func push(layer: Layer) {
